@@ -1,0 +1,66 @@
+﻿@using Wedding_Planner2.Models
+@model IEnumerable<Wedding>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Welcome to the Wedding Planner App!</h1>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Wedding</th>
+                <th>Date</th>
+                <th>Guest Count</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach(var wedding in Model)
+            {
+                <tr>
+                    <td><a asp-controller="Home" asp-action="ViewWedding" asp-route-WeddingId="@wedding.WeddingId">@wedding.WedderOne & @wedding.WedderTwo</a></td>
+                    <td>@wedding.Date</td>
+                    <td>@wedding.RSVPs.Count()</td>
+                    @{
+                        if(wedding.UserId == ViewBag.UserId)
+                        {
+                            <td>
+                                <form asp-action="Delete" asp-controller="Home" method="POST">
+                                    <input type="hidden" name="weddingId" value="@wedding.WeddingId">
+                                    <button type="submit" class="btn btn-danger">Delete</button>
+                                </form>
+                            </td>
+                        }
+                        else if(wedding.RSVPs.Any(r => r.UserId == ViewBag.UserId))
+                        {
+                            <td>
+                                <form asp-action="UnRSVP" asp-controller="Home" method="POST">
+                                    <input type="hidden" name="weddingId" value="@wedding.WeddingId">
+                                    <button type="submit" class="btn btn-primary">UnRSVP</button>
+                                </form>
+                            </td>
+                        }
+                        else
+                        {
+                            <td>
+                                <form asp-action="RSVP" asp-controller="Home" method="POST">
+                                    <input type="hidden" name="weddingId" value="@wedding.WeddingId">
+                                    <button type="submit" class="btn btn-primary">RSVP</button>
+                                </form>
+                            </td>
+                        }
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+    <a href="NewWedding" class="btn btn-default">Create A New Wedding</a>
+    <a href="Logout" class="btn btn-danger">Logout</a>
+</body>
+</html>
